@@ -17,72 +17,71 @@ export class ChatForm {
         this.$form = $(formSel);
         this.$input = $(inputSel);
     }
-
+    
     init(submitCallback) {
-        this.$form.submit((event) => {
-        event.preventDefault();
-        let val = this.$input.val();
-        submitCallback(val);
-        this.$input.val('');
+        this.$form.on('submit', (event) => {
+            event.preventDefault();
+            let val = this.$input.val();
+            submitCallback(val);
+            this.$input.val('');
         });
-        this.$form.find('button').on('click', () => {this.$form.submit()});
+        
+        this.$form.find('button').on('click', () => this.$form.trigger('submit'));
     }
 }
 
 export class ChatList {
     constructor(listSel, username) {
-        this.$list = $(listSel);
-        this.username = username;
+      this.$list = $(listSel);
+      this.username = username;
     }
-
+    
     drawMessage({user: u, timestamp: t, message: m}) {
         let $messageRow = $('<li>', {
-            'class' : 'message-row'
+          'class': 'message-row'
         });
-
-        if(this.username === u) {
-            $messageRow.addClass('me');
+        
+        if (this.username === u) {
+          $messageRow.addClass('me');
         }
-
+        
         let $message = $('<p>');
-
+        
         $message.append($('<span>', {
-            'class': 'message-username',
-            text: u
+          'class': 'message-username',
+          text: u
         }));
-
+        
         $message.append($('<span>', {
-            'class': 'timestamp',
-            'data-time': t,
-            text : moment(t).fromNow()
-            // text: (new Date(t)).getTime()
+          'class': 'timestamp',
+          'data-time': t,
+          text: moment(t).fromNow()
         }));
-
+        
         $message.append($('<span>', {
-            'class': 'message-message',
-            text: m
+          'class': 'message-message',
+          text: m
         }));
-
+        
         let $img = $('<img>', {
             src: createGravatarUrl(u),
             title: u
         });
-
+        
         $messageRow.append($img);
         $messageRow.append($message);
         this.$list.append($messageRow);
-        // $(this.listId).append($messageRow);
         $messageRow.get(0).scrollIntoView();
-    }
-
-    init() {
+      }
+      
+      init() {
         this.timer = setInterval(() => {
-            $('[data-time]').each((idx, element) => {
-                let $element = $(element);
-                let timestamp = new Date().setTime($element.attr('data-time'));
-                let ago = moment(timestamp).fromNow();
-                $element.html(ago);
-            });
+          $('[data-time]').each((idx, element) => {
+            let $element = $(element);
+            let timestamp = new Date().setTime($element.attr('data-time'));
+            let ago = moment(timestamp).fromNow();
+            $element.html(ago);
+          });
         }, 1000);
-    }
-}
+      }
+  }

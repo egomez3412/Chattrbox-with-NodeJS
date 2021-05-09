@@ -16798,7 +16798,7 @@ var ChatForm = /*#__PURE__*/function () {
     value: function init(submitCallback) {
       var _this = this;
 
-      this.$form.submit(function (event) {
+      this.$form.on('submit', function (event) {
         event.preventDefault();
 
         var val = _this.$input.val();
@@ -16808,7 +16808,7 @@ var ChatForm = /*#__PURE__*/function () {
         _this.$input.val('');
       });
       this.$form.find('button').on('click', function () {
-        _this.$form.submit();
+        return _this.$form.trigger('submit');
       });
     }
   }]);
@@ -16848,8 +16848,7 @@ var ChatList = /*#__PURE__*/function () {
       $message.append((0, _jquery.default)('<span>', {
         'class': 'timestamp',
         'data-time': t,
-        text: (0, _moment.default)(t).fromNow() // text: (new Date(t)).getTime()
-
+        text: (0, _moment.default)(t).fromNow()
       }));
       $message.append((0, _jquery.default)('<span>', {
         'class': 'message-message',
@@ -16861,8 +16860,7 @@ var ChatList = /*#__PURE__*/function () {
       });
       $messageRow.append($img);
       $messageRow.append($message);
-      this.$list.append($messageRow); // $(this.listId).append($messageRow);
-
+      this.$list.append($messageRow);
       $messageRow.get(0).scrollIntoView();
     }
   }, {
@@ -16906,10 +16904,8 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var FORM_SELECTOR = '[data-chat="chat-form"]';
-var INPUT_SELECTOR = '[data-chat="message-input]';
-var LIST_SELECTOR = '[data-chat="message-list"]'; // let username = '';
-// username = promptForUsername();
-
+var INPUT_SELECTOR = '[data-chat="message-input"]';
+var LIST_SELECTOR = '[data-chat="message-list"]';
 var userStore = new _storage.UserStore('x-chattrbox/u');
 var username = userStore.get();
 
@@ -16923,29 +16919,29 @@ var ChatApp = function ChatApp() {
 
   _classCallCheck(this, ChatApp);
 
-  this.ChatForm = new _dom.ChatForm(FORM_SELECTOR, INPUT_SELECTOR);
-  this.ChatList = new _dom.ChatList(LIST_SELECTOR, username);
+  this.chatForm = new _dom.ChatForm(FORM_SELECTOR, INPUT_SELECTOR);
+  this.chatList = new _dom.ChatList(LIST_SELECTOR, username);
 
   _wsClient.default.init('ws://localhost:3001');
 
   _wsClient.default.registerOpenHandler(function () {
-    _this.ChatForm.init(function (data) {
+    _this.chatForm.init(function (data) {
       var message = new ChatMessage({
         message: data
       });
 
       _wsClient.default.sendMessage(message.serialize());
     });
+
+    _this.chatList.init();
   });
 
   _wsClient.default.registerMessageHandler(function (data) {
     console.log(data);
     var message = new ChatMessage(data);
 
-    _this.ChatList.drawMessage(message.serialize());
+    _this.chatList.drawMessage(message.serialize());
   });
-
-  this.ChatList.init();
 };
 
 var ChatMessage = /*#__PURE__*/function () {
@@ -16975,8 +16971,7 @@ var ChatMessage = /*#__PURE__*/function () {
   }]);
 
   return ChatMessage;
-}(); // new ChatApp();
-
+}();
 
 var _default = ChatApp;
 exports.default = _default;
