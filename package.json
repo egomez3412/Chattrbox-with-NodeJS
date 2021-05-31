@@ -7,8 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "build": "parcel build app/scripts/src/main.js -d app/scripts/dist",
-    "watch": "parcel watch app/scripts/src/main.js -d app/scripts/dist"
+    "build": "browserify -d app/scripts/src/main.js -o app/scripts/dist/main.js",
+    "watch": "watchify -v -d app/scripts/src/main.js -o app/scripts/dist/main.js"
   },
   "author": "",
   "license": "ISC",
